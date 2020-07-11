@@ -1,12 +1,14 @@
 package com.zw.knight.config;
 
 import com.zw.knight.config.codis.CodisClient;
+import com.zw.knight.config.codis.CodisClientBuilderFromNamespace;
 import com.zw.knight.config.codis.CodisUtils;
+import com.zw.knight.config.namespace.NSClient;
+import com.zw.knight.config.namespace.NameSpaceUtils;
 import com.zw.knight.config.namespace.NodeConfig;
-import com.zw.knight.config.redis.IDelayQueue;
-import com.zw.knight.config.redis.RedisDelayQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -99,6 +101,8 @@ public class RedisConfig {
     @Value("${order.codis.proxy.timeout}")
     private int orderCodisProxyTimeout;
 
+    @Autowired
+    private NSClient nsClient;
 
     @Bean(name = "jedisConnectionFactory")
     public JedisConnectionFactory getRedisConnectionFactory() {
@@ -150,8 +154,9 @@ public class RedisConfig {
     @Bean(name = "codisClient")
     public CodisUtils codisClient(JedisPoolConfig jedisPoolConfig) {
         CodisClientBuilderFromNamespace codisBuilder = new CodisClientBuilderFromNamespace();
-        codisBuilder.withNamespace(codisProxyNamespace).withNSClient(nsClient).withTimeout(
-                codisProxyTimeout).withUseJedis(true).withJedisPoolConfig(jedisPoolConfig);
+        codisBuilder.withNamespace(codisProxyNamespace)
+//                .withNSClient(nsClient)
+                .withTimeout(codisProxyTimeout).withUseJedis(true).withJedisPoolConfig(jedisPoolConfig);
         CodisClient codisClient = codisBuilder.parsePathConfig().build();
         // 启动定时获取最新配置功能，单位：秒
         codisBuilder.watch(10);
