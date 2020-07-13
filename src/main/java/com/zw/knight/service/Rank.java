@@ -1,3 +1,4 @@
+/*
 package com.zw.knight.service;
 
 import com.zw.knight.dao.RedisDao;
@@ -6,24 +7,28 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 
+*/
 /**
  * 实时排名算法
  *
  * @author zw
  * @date 2020/7/10
- */
+ *//*
+
 public class Rank {
 
     @Autowired
     private RedisDao redisDao;
 
-    /**
+    */
+/**
      * //优化算法逻辑增加排名统计任务，一种伪实时方式统计
      * //可以写个定时脚本 每个5分钟统计阅读时长的排名的关系
      * //100 ->100 名
      * //99 ->102 名
      * //1 ->1000000 名
-     */
+     *//*
+
     private Long rank(String user, Long time) {
 
         // 获取用户现有阅读时长
@@ -76,3 +81,4 @@ public class Rank {
     }
 
 }
+*/
