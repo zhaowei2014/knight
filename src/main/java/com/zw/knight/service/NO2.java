@@ -1,5 +1,7 @@
 package com.zw.knight.service;
 
+import com.zw.knight.pojo.LinkNode;
+
 import java.util.Random;
 
 /**
@@ -33,10 +35,33 @@ public class NO2 {
         }
         temp = num / 10;
         result.setNum(num % 10);
-        result.setNext(new LinkNode());
         LinkNode next1 = link1 != null && link1.getNext() != null ? link1.getNext() : null;
         LinkNode next2 = link2 != null && link2.getNext() != null ? link2.getNext() : null;
-        this.add(result.getNext(), next1, next2, temp);
+        if (next1 != null || next2 != null) {
+            result.setNext(new LinkNode());
+            this.add(result.getNext(), next1, next2, temp);
+        }
+    }
+
+    public void printLink(LinkNode link) {
+        if (link != null) {
+            System.out.print(link.getNum());
+            printLink(link.getNext());
+        }
+    }
+
+    public void getDemo(LinkNode linkNode, int num) {
+        if (num <= 0) {
+            return;
+        }
+        Random rd = new Random();
+        linkNode.setNum(rd.nextInt(8) + 1);
+        num -= 1;
+        if (num > 0) {
+            linkNode.setNext(new LinkNode());
+        }
+
+        getDemo(linkNode.getNext(), num);
     }
 
     public static void main(String[] args) {
@@ -61,48 +86,10 @@ public class NO2 {
         System.out.println("-----------打印结束-----------");
         long st = System.currentTimeMillis();
         no2.add(result, node1, node2, 0);
-        System.out.println(System.currentTimeMillis() - st);
-    }
-
-    public void printLink(LinkNode link) {
-        if (link != null) {
-            System.out.print(link.getNum());
-            printLink(link.getNext());
-        }
-    }
-
-    public void getDemo(LinkNode linkNode, int num) {
-        if (num <= 0) {
-            return;
-        }
-        Random rd = new Random();
-        linkNode.setNum(rd.nextInt(8) + 1);
-        num -= 1;
-        if (num > 0) {
-            linkNode.setNext(new LinkNode());
-        }
-
-        getDemo(linkNode.getNext(), num);
-    }
-}
-
-class LinkNode {
-    private int num;
-    private LinkNode next;
-
-    public int getNum() {
-        return num;
-    }
-
-    public void setNum(int num) {
-        this.num = num;
-    }
-
-    public LinkNode getNext() {
-        return next;
-    }
-
-    public void setNext(LinkNode next) {
-        this.next = next;
+        System.out.println("两数和耗时：" + (System.currentTimeMillis() - st) + "毫秒");
+        System.out.println("-----------结果打印开始-----------");
+        no2.printLink(result);
+        System.out.println();
+        System.out.println("-----------结果打印结束-----------");
     }
 }
