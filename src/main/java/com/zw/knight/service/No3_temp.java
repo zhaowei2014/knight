@@ -37,7 +37,7 @@ public class No3_temp {
     }
 
     public static void main(String[] args) {
-        String test1 = "asdfsandf,mnsa,fdn,sfd";
+        String test1 = "asdfsandfmnsafdnsfd";
         No3_temp no3 = new No3_temp();
         System.out.println(no3.getMaxChildLength(test1));
     }
