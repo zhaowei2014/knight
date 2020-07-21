@@ -1,11 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configuration>
-	<include resource="org/springframework/boot/logging/logback/defaults.xml" />
-	<!-- include resource="org/springframework/boot/logging/logback/base.xml"/ -->
-	<include resource="org/springframework/boot/logging/logback/console-appender.xml" />
+<!--
+  ~ Copyright (c) 2019.掌阅科技
+  ~ All rights reserved.
+  -->
 
-	<root level="INFO">
-		<appender-ref ref="CONSOLE" />
-	</root>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <!-- include resource="org/springframework/boot/logging/logback/base.xml"/ -->
+    <include
+            resource="org/springframework/boot/logging/logback/console-appender.xml"/>
+
+    <conversionRule conversionWord="clr"
+                    converterClass="org.springframework.boot.logging.logback.ColorConverter"/>
+    <conversionRule conversionWord="wex"
+                    converterClass="org.springframework.boot.logging.logback.WhitespaceThrowableProxyConverter"/>
+    <conversionRule conversionWord="wEx"
+                    converterClass="org.springframework.boot.logging.logback.ExtendedWhitespaceThrowableProxyConverter"/>
+    <property name="FILE_LOG_PATTERN"
+              value="1"/>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+            <charset>utf8</charset>
+        </encoder>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+    </root>
 
 </configuration>

@@ -1,6 +1,10 @@
 package com.zw.knight.gupiao.pojo;
 
+import com.zw.knight.gupiao.StockService;
 import lombok.Data;
+import lombok.extern.java.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 
@@ -10,35 +14,62 @@ import java.math.BigDecimal;
  */
 @Data
 public class Stock {
+    private static final Logger log = LoggerFactory.getLogger(Stock.class);
     private String code;
     private String name;
     private String cost;
     private String nowPrice;
     private String maxPrice;
     private String minPrice;
+    private String openPrice;
     private String num;
+    private String rate;  // 佣金费率
+    private String minCommission; // 最低佣金
+    private String taxRate = "10"; // 印花税
+    private String last; // 当前结余
+    private String sale; // 不亏本卖出价格
 
     public Stock(String[] stockArr) {
         this.code = stockArr[0];
         this.name = stockArr[1];
         this.cost = stockArr[2];
         this.num = stockArr[3];
+        this.rate = stockArr[4];
+        this.minCommission = stockArr[5];
     }
 
-    public double getLast() {
+    public String getCash() {
         BigDecimal now = new BigDecimal(this.nowPrice);
-        BigDecimal last = (now.subtract(new BigDecimal(this.cost))).multiply(new BigDecimal(num));
-        System.out.println(this.name);
-        System.out.println("当前：" + now.toString());
-        System.out.println("增减：" + now.subtract(new BigDecimal(this.cost)));
-        System.out.println("结余：" + last.toString());
-        return last.doubleValue();
+        this.last = (now.subtract(new BigDecimal(this.cost))).multiply(new BigDecimal(num)).toString();
+        log.info(this.name);
+        log.info("当前：" + now + " 增减：" + now.subtract(new BigDecimal(this.cost)) + " 结余：" + this.last);
+        return this.last;
+    }
+
+    public BigDecimal getSale() {
+        BigDecimal now = new BigDecimal(this.nowPrice);
+        BigDecimal cost = new BigDecimal(this.cost);
+        BigDecimal rate = new BigDecimal(this.rate).divide(BigDecimal.valueOf(10000));
+        BigDecimal minCommission = new BigDecimal(this.minCommission);
+        BigDecimal taxRate = new BigDecimal(this.taxRate).divide(BigDecimal.valueOf(10000));
+        BigDecimal num = new BigDecimal(this.num);
+        log.info(this.name);
+        BigDecimal sale = cost.divide(BigDecimal.ONE.subtract(taxRate).subtract(rate).subtract(rate), 3, BigDecimal.ROUND_UP);
+        BigDecimal todayRate = sale.subtract(now).divide(sale, 2, BigDecimal.ROUND_UP);
+        BigDecimal commission = sale.multiply(num).multiply(rate);
+        if (commission.compareTo(minCommission) < 0) {
+            commission = minCommission;
+        }
+        // 计算印花税
+        BigDecimal tax = sale.multiply(num).multiply(taxRate);
+        log.info("不亏本卖出价格：" + sale + " 今日涨幅：" + todayRate + " 全仓佣金,卖:" + commission + " 全仓印花税：" + tax);
+        return sale;
     }
 
     @Override
     public String toString() {
-        double last = getLast();
-        String desc = last > 0 ? "盈利" : "亏损";
+        String last = getLast();
+        String desc = Double.parseDouble(last) > 0 ? "盈利" : "亏损";
         return "[" + this.name + ":" + desc + last + "]";
     }
 }
