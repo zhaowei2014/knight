@@ -1,8 +1,6 @@
 package com.zw.knight.gupiao.pojo;
 
-import com.zw.knight.gupiao.StockService;
 import lombok.Data;
-import lombok.extern.java.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,14 +53,22 @@ public class Stock {
         BigDecimal num = new BigDecimal(this.num);
         log.info(this.name);
         BigDecimal sale = cost.divide(BigDecimal.ONE.subtract(taxRate).subtract(rate).subtract(rate), 3, BigDecimal.ROUND_UP);
-        BigDecimal todayRate = sale.subtract(now).divide(sale, 2, BigDecimal.ROUND_UP);
+        if (sale.compareTo(now) < 0) {
+            sale = now;
+        }
+        BigDecimal todayRate = sale.subtract(new BigDecimal(this.openPrice)).divide(sale, 4, BigDecimal.ROUND_UP).multiply(BigDecimal.valueOf(100));
         BigDecimal commission = sale.multiply(num).multiply(rate);
         if (commission.compareTo(minCommission) < 0) {
             commission = minCommission;
         }
         // 计算印花税
         BigDecimal tax = sale.multiply(num).multiply(taxRate);
-        log.info("不亏本卖出价格：" + sale + " 今日涨幅：" + todayRate + " 全仓佣金,卖:" + commission + " 全仓印花税：" + tax);
+        if (todayRate.compareTo(BigDecimal.valueOf(10)) <= 0) {
+            log.info("不亏本卖出价格：" + sale + " 今日涨幅：" + todayRate + "% 全仓佣金,卖:" + commission + " 全仓印花税：" + tax);
+        } else {
+            BigDecimal loss = new BigDecimal(this.maxPrice).subtract(cost).multiply(num);
+            log.info("不适现在卖出 - 现最高价:" + this.maxPrice + " 此价卖出亏损：" + loss);
+        }
         return sale;
     }
 
