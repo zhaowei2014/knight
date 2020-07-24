@@ -1,6 +1,6 @@
-package com.zw.knight.gupiao;
+package com.zw.knight.stock;
 
-import com.zw.knight.gupiao.pojo.Stock;
+import com.zw.knight.stock.pojo.Stock;
 import com.zw.knight.util.HttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

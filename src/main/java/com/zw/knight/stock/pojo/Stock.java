@@ -1,4 +1,4 @@
-package com.zw.knight.gupiao.pojo;
+package com.zw.knight.stock.pojo;
 
 import lombok.Data;
 import org.slf4j.Logger;

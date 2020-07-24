@@ -12,41 +12,56 @@ import java.lang.reflect.Method;
  * @date 2020/7/15
  */
 public class Sort {
-    // 二分排序
-    public void doubleSort(int[] nums, int l, int r) {
-        if (l >= r) return;
+    // 二分排序  从小到大
+    public void doubleSort(int[] nums, int start, int end) {
+        for (int i = 1; i < nums.length; i++) {
+            if (nums[i] < nums[i - 1]) {
+                int temp = nums[i];
+                // 当前位置
+                int left = 0;
+                int right = i - 1;
+                while (left <= right) {
+                    int mid = (left + right) / 2;
+                    if (nums[mid] < temp) {
+                        left = mid + 1;
+                    } else {
+                        right = mid - 1;
+                    }
+                }
 
+                if (i - left >= 0) System.arraycopy(nums, left, nums, left + 1, i - left);
+                if (left != i) {
+                    nums[left] = temp;
+                }
+            }
+        }
 
     }
 
-    // 归并排序
+    // 归并排序 从小到大
     public void mergeSort(int[] nums, int start, int end) {
         int[] result = new int[nums.length];
         if (start >= end) return;
         int len = end - start;
         int mid = (len >> 1) + start;
         int start1 = start;
-        int end1 = mid;
         int start2 = mid + 1;
-        int end2 = end;
-        mergeSort(nums, start1, end1);
-        mergeSort(nums, start2, end2);
+        mergeSort(nums, start1, mid);
+        mergeSort(nums, start2, end);
         int k = start;
-        while (start1 <= end1 && start2 <= end2)
-            result[k++] = nums[start1] > nums[start2] ? nums[start1++] : nums[start2++];
-        while (start1 <= end1)
+        while (start1 <= mid && start2 <= end)
+            result[k++] = nums[start1] < nums[start2] ? nums[start1++] : nums[start2++];
+        while (start1 <= mid)
             result[k++] = nums[start1++];
-        while (start2 <= end2)
+        while (start2 <= end)
             result[k++] = nums[start2++];
-        for (int i = 0; i <= end; i++) {
-            nums[i] = result[i];
-        }
+        if (end + 1 >= 0) System.arraycopy(result, 0, nums, 0, end + 1);
     }
 
-    // 插入排序
+    // 插入排序 从大到小
     public void inSort(int[] nums, int start, int end) {
         for (int i = 1; i < nums.length; i++) {
-            if (nums[i] > nums[i - 1]) {
+            if (nums[i] < nums[i - 1]) {
                 int temp = nums[i];
                 for (int j = i; j >= 0; j--) {
                     if (j > 0 && temp < nums[j - 1]) {
@@ -60,9 +75,9 @@ public class Sort {
         }
     }
 
-    // 堆排序
+    // 堆排序 从大到小
 
-    // 快速排序
+    // 快速排序 从大到小
     public void quickSort(int[] nums, int l, int r) {
         if (l < r) {
             int x = nums[l], i = l, j = r;
@@ -94,11 +109,12 @@ public class Sort {
     }
 
     private void print(String name, int[] nums) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        System.out.println(name + ": nums" + GsonUtils.toJson(nums));
         int[] x = nums.clone();
         Method method = Sort.class.getDeclaredMethod(name, int[].class, int.class, int.class);
         long st = System.nanoTime();
-        method.invoke(this, nums, 0, nums.length - 1);
+        method.invoke(this, x, 0, nums.length - 1);
         System.out.println(name + "耗时:" + (System.nanoTime() - st));
+        System.out.println(name + ": nums" + GsonUtils.toJson(x));
+        System.out.println(name + ": nums" + GsonUtils.toJson(nums));
     }
 }

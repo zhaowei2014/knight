@@ -4,29 +4,16 @@
   ~ All rights reserved.
   -->
 
-<configuration>
-    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
-    <!-- include resource="org/springframework/boot/logging/logback/base.xml"/ -->
-    <include
-            resource="org/springframework/boot/logging/logback/console-appender.xml"/>
-
-    <conversionRule conversionWord="clr"
-                    converterClass="org.springframework.boot.logging.logback.ColorConverter"/>
-    <conversionRule conversionWord="wex"
-                    converterClass="org.springframework.boot.logging.logback.WhitespaceThrowableProxyConverter"/>
-    <conversionRule conversionWord="wEx"
-                    converterClass="org.springframework.boot.logging.logback.ExtendedWhitespaceThrowableProxyConverter"/>
-    <property name="FILE_LOG_PATTERN"
-              value="1"/>
+<configuration debug="false">
+    <!-- definition of appender STDOUT -->
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>${FILE_LOG_PATTERN}</pattern>
-            <charset>utf8</charset>
+            <pattern>%-4relative [%thread] %-5level %logger{35} - %msg %n</pattern>
         </encoder>
     </appender>
 
-    <root level="INFO">
+    <root level="ERROR">
+        <!-- appender referenced after it is defined -->
         <appender-ref ref="STDOUT"/>
     </root>
-
 </configuration>
