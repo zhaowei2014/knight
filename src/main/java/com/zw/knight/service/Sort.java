@@ -28,14 +28,10 @@ public class Sort {
                         right = mid - 1;
                     }
                 }
-
-                if (i - left >= 0) System.arraycopy(nums, left, nums, left + 1, i - left);
-                if (left != i) {
-                    nums[left] = temp;
-                }
+                System.arraycopy(nums, left, nums, left + 1, i - left);
+                nums[left] = temp;
             }
         }
-
     }
 
     // 归并排序 从小到大
@@ -79,27 +75,27 @@ public class Sort {
 
     // 快速排序 从大到小
     public void quickSort(int[] nums, int l, int r) {
-        if (l < r) {
-            int x = nums[l], i = l, j = r;
-            while (i < j) {
-                while (i < j && (x < nums[j])) j--;
-                if (i < j) {
-                    nums[i++] = nums[j];
-                }
-                while (i < j && (x >= nums[i])) i++;
-                if (i < j) {
-                    nums[j--] = nums[i];
-                }
+        if (l >= r) return;
+        int x = nums[l];
+        int i = l;
+        int j = r;
+        while (i < j) {
+            while (i < j && (x < nums[j])) j--;
+            if (i < j) {
+                nums[i++] = nums[j];
             }
-            nums[i] = x;
-            quickSort(nums, l, i - 1);
-            quickSort(nums, i + 1, r);
+            while (i < j && (x >= nums[i])) i++;
+            if (i < j) {
+                nums[j--] = nums[i];
+            }
         }
+        nums[i] = x;
+        quickSort(nums, l, i - 1);
+        quickSort(nums, i + 1, r);
     }
 
     public static void main(String[] args) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         int[] nums = {9, 8, 7, 6, 5, 4, 3, 2, 1};
-        int[] nums1 = {9, 8, 7, 6, 5, 4, 3, 2, 1};
         Sort sort = new Sort();
         // 插入排序
         sort.print("doubleSort", nums);

@@ -22,7 +22,9 @@ public class HttpClient {
     public static String get(String url) {
         // 获得Http客户端(可以理解为:你得先有一个浏览器;注意:实际上HttpClient与浏览器是不一样的)
         HttpHost proxy = new HttpHost("192.168.7.24", 9998);
-        CloseableHttpClient httpClient = HttpClientBuilder.create().setProxy(proxy).build();
+        CloseableHttpClient httpClient = HttpClientBuilder.create()
+//                .setProxy(proxy)
+                .build();
         // 创建Get请求
         HttpGet httpGet = new HttpGet(url);
 

@@ -72,10 +72,10 @@ public class Stock {
         return sale;
     }
 
-    @Override
-    public String toString() {
-        String last = getLast();
-        String desc = Double.parseDouble(last) > 0 ? "盈利" : "亏损";
-        return "[" + this.name + ":" + desc + last + "]";
-    }
+//    @Override
+//    public String toString() {
+//        String last = getLast();
+//        String desc = Double.parseDouble(last) > 0 ? "盈利" : "亏损";
+//        return "[" + this.name + ":" + desc + last + "]";
+//    }
 }
