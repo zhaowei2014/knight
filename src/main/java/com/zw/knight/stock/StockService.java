@@ -2,6 +2,7 @@ package com.zw.knight.stock;
 
 import com.zw.knight.stock.pojo.Profit;
 import com.zw.knight.stock.pojo.Stock;
+import com.zw.knight.util.GsonUtils;
 import com.zw.knight.util.HttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -99,17 +100,18 @@ public class StockService {
 
     // 根据卖价，买价，计算盈亏
     private double profit(Map<String, String> buys, Map<String, String> sales, String code) {
-        Stock stock = getStockByCode(code);
         // 所有的卖价
-        Profit profit1 = calculator(sales, stock, new Profit());
+        Profit profit1 = calculator(sales, code, new Profit());
         // 计算所有买价的佣金
-        Profit profit2 = calculator(buys, stock, new Profit());
+        Profit profit2 = calculator(buys, code, new Profit());
         // 利润
         return profit1.getTotal().subtract(profit2.getTotal()).subtract(profit1.getCommission())
-                .subtract(profit1.getTax()).subtract(profit2.getCommission()).subtract(profit2.getTax()).doubleValue();
+                .subtract(profit1.getTax()).subtract(profit2.getCommission()).doubleValue();
     }
 
-    private Profit calculator(Map<String, String> sales, Stock stock, Profit profit) {
+    private Profit calculator(Map<String, String> sales, String code, Profit profit) {
+        Stock stock = getStockByCode(code);
+        profit.setRate(new BigDecimal(stock.getRate()).divide(BigDecimal.valueOf(10000), 4));
         for (Map.Entry<String, String> sale : sales.entrySet()) {
             BigDecimal amount = new BigDecimal(sale.getKey());
             BigDecimal hand = new BigDecimal(sale.getValue());
@@ -123,71 +125,49 @@ public class StockService {
         return profit;
     }
 
-    public Stock getStockByCode(String code) {
+    /**
+     * 根据传入code 从配置文件中查出相关信息
+     *
+     * @param code 代号
+     */
+    private Stock getStockByCode(String code) {
         List<Stock> stocks = myStock.stream().filter(stock -> stock.getCode().equals(code)).collect(Collectors.toList());
         return stocks.get(0);
     }
 
-    public void saleThenBuy(Map<String, String> sales, String code) {
-        Stock stock = getStockByCode(code);
-        Profit profit = calculator(sales, stock, new Profit());
-        // 当前
-        BigDecimal saleProfit = profit.getTotal().subtract(profit.getCommission()).subtract(profit.getTax());
-        BigDecimal add = BigDecimal.ONE.add(new BigDecimal(stock.getRate()).divide(BigDecimal.valueOf(10000)));
-        BigDecimal buyAmount = saleProfit
-                .divide(profit.getHand())
-                .divide(add, 2, BigDecimal.ROUND_DOWN);
-        BigDecimal buyAmount200 = saleProfit.subtract(BigDecimal.valueOf(200)).divide(profit.getHand())
-                .divide(add, 2, BigDecimal.ROUND_DOWN);
-        BigDecimal buyAmount400 = saleProfit.subtract(BigDecimal.valueOf(400)).divide(profit.getHand())
-                .divide(add, 2, BigDecimal.ROUND_DOWN);
-        System.out.println(buyAmount);
-        System.out.println(buyAmount200);
-        System.out.println(buyAmount400);
-
+    /**
+     * 先卖后买，按盈利给出买入价格
+     */
+    public Map<String, String> saleThenBuy(Map<String, String> sales, String code) {
+        Profit profit = calculator(sales, code, new Profit());
+        return profit.getSaleThenBuyResult();
     }
 
-    private void buyThenSale(Map<String, String> buy, String code) {
-        Stock stock = getStockByCode(code);
-        Profit profit = calculator(buy, stock, new Profit());
-        // 当前
-        BigDecimal saleProfit = profit.getTotal().subtract(profit.getCommission()).subtract(profit.getTax());
-        BigDecimal add = BigDecimal.ONE.add(new BigDecimal(stock.getRate()).divide(BigDecimal.valueOf(10000)));
-        BigDecimal buyAmount = saleProfit
-                .divide(profit.getHand())
-                .divide(add, 2, BigDecimal.ROUND_DOWN);
-        BigDecimal buyAmount200 = saleProfit.subtract(BigDecimal.valueOf(200)).divide(profit.getHand())
-                .divide(add, 2, BigDecimal.ROUND_DOWN);
-        BigDecimal buyAmount400 = saleProfit.subtract(BigDecimal.valueOf(400)).divide(profit.getHand())
-                .divide(add, 2, BigDecimal.ROUND_DOWN);
-        System.out.println(buyAmount);
-        System.out.println(buyAmount200);
-        System.out.println(buyAmount400);
+    /**
+     * 先买后买，按盈利给出卖出价格
+     */
+    public Map<String, String> buyThenSale(Map<String, String> buy, String code) {
+        Profit profit = calculator(buy, code, new Profit());
+        return profit.getBuyThenSaleResult();
     }
-
 
     public static void main(String[] args) throws IOException {
         StockService stockService = new StockService();
-//        stockService.sum();
-//        Map<String, String> buy = new HashMap<>();
-//        buy.put("9.55", "600");
-//        buy.put("9.53", "400");
-//        Map<String, String> sale = new HashMap<>();
-//        sale.put("9.7", "400");
-//        sale.put("9.65", "400");
-//        sale.put("9.64", "200");
-//        System.out.println(stockService.profit(buy, sale, "sz002670"));
-
         Map<String, String> buy = new HashMap<>();
-        buy.put("37.29", "100");
-        buy.put("37.3", "100");
-        buy.put("37.32", "100");
-        buy.put("37.33", "100");
+        buy.put("41.43", "200");
+        buy.put("41.5", "300");
+        buy.put("39.7", "100");
+//        buy.put("9.6", "1000");
         Map<String, String> sale = new HashMap<>();
-        sale.put("37.84", "300");
-        sale.put("37.6", "100");
-//        System.out.println(stockService.profit(buy, sale, "sz002151"));
-
-        stockService.saleThenBuy(sale, "sz002151");
+        sale.put("38.7", "200");
+        sale.put("38.9", "200");
+        sale.put("38.81", "100");
+        sale.put("39", "100");
+        sale.put("39.1", "100");
+        sale.put("39.3", "100");
+        sale.put("39.4", "100");
+//        System.out.println(stockService.profit(buy, sale, "sz002670"));
+        System.out.println(GsonUtils.toJson(stockService.saleThenBuy(sale, "sz002151")));
+        stockService.sum();
     }
 }
