@@ -3,7 +3,6 @@ package com.zw.knight.util;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.ParseException;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -35,17 +34,10 @@ public class HttpClient {
             response = httpClient.execute(httpGet);
             // 从响应模型中获取响应实体
             HttpEntity responseEntity = response.getEntity();
-            System.out.println("响应状态为:" + response.getStatusLine());
             if (responseEntity != null) {
-                System.out.println("响应内容长度为:" + responseEntity.getContentLength());
-//                System.out.println("响应内容为:" + EntityUtils.toString(responseEntity));
                 return EntityUtils.toString(responseEntity);
             }
-        } catch (ClientProtocolException e) {
-            e.printStackTrace();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (ParseException | IOException e) {
             e.printStackTrace();
         } finally {
             try {

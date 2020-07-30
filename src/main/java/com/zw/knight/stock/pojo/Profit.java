@@ -33,7 +33,10 @@ public class Profit {
      */
     private BigDecimal rate = BigDecimal.ZERO;
 
-    private BigDecimal taxRate = BigDecimal.ZERO;
+    /**
+     * 印花税率
+     */
+    private BigDecimal taxRate = BigDecimal.valueOf(0.001);
 
 
     /**
