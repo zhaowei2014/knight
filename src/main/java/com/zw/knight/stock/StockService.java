@@ -98,7 +98,7 @@ public class StockService {
         for (Stock stock : stocks) {
             sum = sum.add(new BigDecimal(stock.getLast()));
         }
-        log.info("当前持仓" + (sum.compareTo(BigDecimal.ZERO) > 0 ? "盈利：" : "亏损" + sum.toString()));
+//        log.info("当前持仓" + (sum.compareTo(BigDecimal.ZERO) > 0 ? "盈利：" : "亏损" + sum.toString()));
         return stocks;
     }
 
