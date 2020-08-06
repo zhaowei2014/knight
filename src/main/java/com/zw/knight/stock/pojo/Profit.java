@@ -50,7 +50,7 @@ public class Profit {
      * 买入消耗总金额
      */
     public BigDecimal getBuyCost() {
-        return this.total.add(this.commission);
+        return this.total.add(this.commission).add(this.tax);
     }
 
     /**

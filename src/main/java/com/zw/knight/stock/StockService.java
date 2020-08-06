@@ -2,6 +2,7 @@ package com.zw.knight.stock;
 
 import com.zw.knight.stock.pojo.Profit;
 import com.zw.knight.stock.pojo.Stock;
+import com.zw.knight.util.GsonUtils;
 import com.zw.knight.util.HttpClient;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
@@ -98,7 +99,7 @@ public class StockService {
         for (Stock stock : stocks) {
             sum = sum.add(new BigDecimal(stock.getLast()));
         }
-//        log.info("当前持仓" + (sum.compareTo(BigDecimal.ZERO) > 0 ? "盈利：" : "亏损" + sum.toString()));
+        log.info("当前持仓" + (sum.compareTo(BigDecimal.ZERO) > 0 ? "盈利：" : "亏损" + sum.toString()));
         return stocks;
     }
 
@@ -158,23 +159,25 @@ public class StockService {
         return profit.getBuyThenSaleResult();
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws Exception {
         StockService stockService = new StockService();
         Map<String, String> buy = new HashMap<>();
-        buy.put("41.43", "200");
-        buy.put("41.5", "300");
-        buy.put("39.7", "100");
+        buy.put("12", "600");
+//        buy.put("41.5", "300");
+//        buy.put("39.7", "100");
 //        buy.put("9.6", "1000");
         Map<String, String> sale = new HashMap<>();
-        sale.put("38.7", "200");
-        sale.put("38.9", "200");
-        sale.put("38.81", "100");
-        sale.put("39", "100");
-        sale.put("39.1", "100");
-        sale.put("39.3", "100");
-        sale.put("39.4", "100");
-//        System.out.println(stockService.profit(buy, sale, "sz002670"));
-//        System.out.println(GsonUtils.toJson(stockService.saleThenBuy(sale, "sz002151")));
-        stockService.sum();
+//        sale.put("38.7", "200");
+//        sale.put("38.9", "200");
+//        sale.put("38.81", "100");
+//        sale.put("39", "100");
+//        sale.put("39.1", "100");
+        sale.put("12.14", "300");
+        sale.put("12.12", "300");
+        sale.put("12.11", "300");
+//        System.out.println(stockService.profit(buy, sale, "sz000591"));
+        System.out.println(GsonUtils.toJson(stockService.saleThenBuy(sale, "sz002905")));
+//        System.out.println(GsonUtils.toJson(stockService.buyThenSale(buy, "sz002905")));
+//        stockService.sum();
     }
 }

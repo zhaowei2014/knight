@@ -38,7 +38,7 @@ public class Stock {
 
     public String getCash() {
         this.last = (this.nowPrice.subtract(this.cost)).multiply(num).toString();
-//        log.info("当前：" + this.nowPrice + " 增减：" + this.nowPrice.subtract(this.cost) + " 结余：" + this.last);
+        log.info("当前：" + this.nowPrice + " 增减：" + this.nowPrice.subtract(this.cost) + " 结余：" + this.last);
         return this.last;
     }
 
@@ -55,10 +55,10 @@ public class Stock {
         // 计算印花税
         BigDecimal tax = this.sale.multiply(num).multiply(taxRate);
         if (todayRate.compareTo(BigDecimal.valueOf(10)) <= 0) {
-//            log.info("盈利卖出价格：" + this.sale + " 今日涨幅：" + todayRate + "% 全仓佣金,卖:" + commission + " 全仓印花税：" + tax);
+            log.info("盈利卖出价格：" + this.sale + " 今日涨幅：" + todayRate + "% 全仓佣金,卖:" + commission + " 全仓印花税：" + tax);
         } else {
             BigDecimal loss = new BigDecimal(this.maxPrice).subtract(cost).multiply(num);
-//            log.info("不适现在卖出 - 现最高价:" + this.maxPrice + " 此价卖出亏损：" + loss);
+            log.info("不适现在卖出 - 现最高价:" + this.maxPrice + " 此价卖出亏损：" + loss);
         }
         return this.sale;
     }
