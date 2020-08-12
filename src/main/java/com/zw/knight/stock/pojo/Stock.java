@@ -1,6 +1,5 @@
 package com.zw.knight.stock.pojo;
 
-import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,7 +9,6 @@ import java.math.BigDecimal;
  * @author zw
  * @date 2020/7/20
  */
-@Data
 public class Stock {
     private static final Logger log = LoggerFactory.getLogger(Stock.class);
     private String code;
@@ -69,4 +67,104 @@ public class Stock {
 //        String desc = Double.parseDouble(last) > 0 ? "盈利" : "亏损";
 //        return "[" + this.name + ":" + desc + last + "]";
 //    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public BigDecimal getCost() {
+        return cost;
+    }
+
+    public void setCost(BigDecimal cost) {
+        this.cost = cost;
+    }
+
+    public BigDecimal getNowPrice() {
+        return nowPrice;
+    }
+
+    public void setNowPrice(BigDecimal nowPrice) {
+        this.nowPrice = nowPrice;
+    }
+
+    public String getMaxPrice() {
+        return maxPrice;
+    }
+
+    public void setMaxPrice(String maxPrice) {
+        this.maxPrice = maxPrice;
+    }
+
+    public String getMinPrice() {
+        return minPrice;
+    }
+
+    public void setMinPrice(String minPrice) {
+        this.minPrice = minPrice;
+    }
+
+    public BigDecimal getOpenPrice() {
+        return openPrice;
+    }
+
+    public void setOpenPrice(BigDecimal openPrice) {
+        this.openPrice = openPrice;
+    }
+
+    public BigDecimal getNum() {
+        return num;
+    }
+
+    public void setNum(BigDecimal num) {
+        this.num = num;
+    }
+
+    public BigDecimal getRate() {
+        return rate;
+    }
+
+    public void setRate(BigDecimal rate) {
+        this.rate = rate;
+    }
+
+    public BigDecimal getMinCommission() {
+        return minCommission;
+    }
+
+    public void setMinCommission(BigDecimal minCommission) {
+        this.minCommission = minCommission;
+    }
+
+    public BigDecimal getTaxRate() {
+        return taxRate;
+    }
+
+    public void setTaxRate(BigDecimal taxRate) {
+        this.taxRate = taxRate;
+    }
+
+    public String getLast() {
+        return last;
+    }
+
+    public void setLast(String last) {
+        this.last = last;
+    }
+
+    public void setSale(BigDecimal sale) {
+        this.sale = sale;
+    }
 }
