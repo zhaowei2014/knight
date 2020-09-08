@@ -162,27 +162,17 @@ public class StockService {
     public static void main(String[] args) throws Exception {
         StockService stockService = new StockService();
         Map<String, String> buy = new HashMap<>();
-        buy.put("5.00", "2400");
-//        buy.put("41.5", "300");
-//        buy.put("39.7", "100");
-//        buy.put("9.6", "1000");
+        buy.put("4.20", "3100");
         Map<String, String> sale = new HashMap<>();
-//        sale.put("38.7", "200");
-//        sale.put("38.9", "200");
-//        sale.put("38.81", "100");
-//        sale.put("39", "100");
-//        sale.put("39.1", "100");
-        sale.put("4.97", "200");
-        sale.put("4.96", "200");
-        sale.put("4.95", "300");
-        sale.put("4.94", "800");
-        sale.put("4.93", "400");
-        sale.put("4.92", "200");
-        sale.put("4.91", "100");
-        sale.put("4.9", "200");
+        sale.put("4.24", "500");
+        sale.put("4.22", "500");
+        sale.put("4.21", "600");
+        sale.put("4.2", "1000");
 //        System.out.println(stockService.profit(buy, sale, "sz000591"));
-        System.out.println(GsonUtils.toJson(stockService.saleThenBuy(sale, "sz002905")));
-//        System.out.println(GsonUtils.toJson(stockService.buyThenSale(buy, "sz002905")));
+        System.out.println(GsonUtils.toJson(stockService.saleThenBuy(sale, "sh600165")));
+//     System.out.println(GsonUtils.toJson(stockService.buyThenSale(buy, "sz002905")));
 //        stockService.sum();
     }
+
+
 }
