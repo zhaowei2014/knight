@@ -4,9 +4,8 @@ import com.zw.knight.stock.pojo.Profit;
 import com.zw.knight.stock.pojo.Stock;
 import com.zw.knight.util.GsonUtils;
 import com.zw.knight.util.HttpClient;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -26,48 +25,53 @@ import java.util.stream.Collectors;
  * @author zw
  * @date 2020/7/20
  */
+@Slf4j
 @Service
 public class StockService {
-    private static final Logger log = LoggerFactory.getLogger(StockService.class);
-
     private static final String URL = "http://hq.sinajs.cn/list=";
 
     private static List<Stock> myStock;
 
-    {
+    static {
         try {
-            myStock = this.getMyStock();
-            this.getStock();
+            myStock = getMyStock();
+            getStock();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public List<Stock> getStock() throws IOException {
+    public static List<Stock> getStock() throws IOException {
         String codes = myStock.stream().map(Stock::getCode).collect(Collectors.toList()).toString();
-        codes = codes.substring(1, codes.length() - 1).replaceAll(" ", "");
+        codes = codes.substring(1, codes.length() - 1).replace(" ", "");
         String data = HttpClient.get(URL + codes);
-        this.replaceStock(data);
+        replaceStock(data);
         return myStock;
     }
 
-    private List<Stock> getMyStock() throws IOException {
+    private static List<Stock> getMyStock() {
         List<Stock> stocks = new ArrayList<>();
         // 获取自选股票信息
-        File file = new File("D:/stock");
-        BufferedReader br = new BufferedReader(new FileReader(file));
-        String data;
-        while ((data = br.readLine()) != null) {
-            if (data.startsWith("#")) continue;
-            Stock stock = getStock(data);
-            if (stock != null) {
-                stocks.add(stock);
+        File file = new File(StockService.class.getResource("/").getPath() + "/config/stock");
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String data;
+            while ((data = br.readLine()) != null) {
+                if (data.startsWith("#")) {
+                    continue;
+                }
+                Stock stock = getStock(data);
+                if (stock != null) {
+                    stocks.add(stock);
+                }
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+
         return stocks;
     }
 
-    private Stock getStock(String data) {
+    private static Stock getStock(String data) {
         String[] stockArr = data.split(",");
         if (stockArr.length >= 3) {
             return new Stock(stockArr);
@@ -75,7 +79,7 @@ public class StockService {
         return null;
     }
 
-    private void replaceStock(String data) {
+    private static void replaceStock(String data) {
         String[] datas = data.split(";");
         for (String stockData : datas) {
             for (Stock stock : myStock) {
@@ -92,19 +96,19 @@ public class StockService {
     }
 
     public List<Stock> sum() throws IOException {
-        List<Stock> stocks = this.getStock();
+        List<Stock> stocks = getStock();
         stocks.forEach(Stock::getCash);
         stocks.forEach(Stock::getSale);
         BigDecimal sum = BigDecimal.ZERO;
         for (Stock stock : stocks) {
             sum = sum.add(new BigDecimal(stock.getLast()));
         }
-        log.info("当前持仓" + (sum.compareTo(BigDecimal.ZERO) > 0 ? "盈利：" : "亏损" + sum.toString()));
+        log.info("当前持仓：{}", (sum.compareTo(BigDecimal.ZERO) > 0 ? "盈利：" : "亏损" + sum.toString()));
         return stocks;
     }
 
     // 根据卖价，买价，计算盈亏
-    public double profit(Map<String, String> buys, Map<String, String> sales, String code) throws Exception {
+    public static double profit(Map<String, String> buys, Map<String, String> sales, String code) throws Exception {
         // 所有的卖价
         Profit profit1 = calculator(sales, code, new Profit());
         // 计算所有买价的佣金
@@ -114,7 +118,7 @@ public class StockService {
                 .subtract(profit1.getTax()).subtract(profit2.getCommission()).doubleValue();
     }
 
-    private Profit calculator(Map<String, String> sales, String code, Profit profit) throws Exception {
+    private static Profit calculator(Map<String, String> sales, String code, Profit profit) throws Exception {
         Stock stock = getStockByCode(code);
         profit.setRate(stock.getRate());
         for (Map.Entry<String, String> sale : sales.entrySet()) {
@@ -135,7 +139,7 @@ public class StockService {
      *
      * @param code 代号
      */
-    private Stock getStockByCode(String code) throws Exception {
+    private static Stock getStockByCode(String code) throws Exception {
         List<Stock> stocks = myStock.stream().filter(stock -> stock.getCode().equals(code)).collect(Collectors.toList());
         if (CollectionUtils.isEmpty(stocks)) {
             throw new Exception();
@@ -146,7 +150,7 @@ public class StockService {
     /**
      * 先卖后买，按盈利给出买入价格
      */
-    public Map<String, String> saleThenBuy(Map<String, String> sales, String code) throws Exception {
+    public static Map<String, String> saleThenBuy(Map<String, String> sales, String code) throws Exception {
         Profit profit = calculator(sales, code, new Profit());
         return profit.getSaleThenBuyResult();
     }
@@ -154,24 +158,24 @@ public class StockService {
     /**
      * 先买后买，按盈利给出卖出价格
      */
-    public Map<String, String> buyThenSale(Map<String, String> buy, String code) throws Exception {
+    public static Map<String, String> buyThenSale(Map<String, String> buy, String code) throws Exception {
         Profit profit = calculator(buy, code, new Profit());
         return profit.getBuyThenSaleResult();
     }
 
     public static void main(String[] args) throws Exception {
+        log.info(StockService.class.getResource("").getPath());
+
         StockService stockService = new StockService();
-        Map<String, String> buy = new HashMap<>();
-        buy.put("4.20", "3100");
-        Map<String, String> sale = new HashMap<>();
-        sale.put("4.24", "500");
-        sale.put("4.22", "500");
-        sale.put("4.21", "600");
-        sale.put("4.2", "1000");
-//        System.out.println(stockService.profit(buy, sale, "sz000591"));
-        System.out.println(GsonUtils.toJson(stockService.saleThenBuy(sale, "sh600165")));
-//     System.out.println(GsonUtils.toJson(stockService.buyThenSale(buy, "sz002905")));
-//        stockService.sum();
+        Map<String, String> buy = new HashMap<>(2);
+        buy.put("266.6", "100");
+        Map<String, String> sale = new HashMap<>(2);
+        sale.put("268", "100");
+        log.info(StockService.profit(buy, sale, "sz000858") + "");
+        log.info(GsonUtils.toJson(StockService.saleThenBuy(sale, "sz002905")));
+        log.info(GsonUtils.toJson(StockService.buyThenSale(buy, "sz002905")));
+        stockService.sum();
+        log.info(StockService.getStock().get(0).getNowPrice().toString());
     }
 
 

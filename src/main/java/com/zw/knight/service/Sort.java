@@ -12,7 +12,9 @@ import java.lang.reflect.Method;
  * @date 2020/7/15
  */
 public class Sort {
-    // 二分排序  从小到大
+    /**
+     * 二分排序  从小到大
+     */
     public void doubleSort(int[] nums, int start, int end) {
         for (int i = 1; i < nums.length; i++) {
             if (nums[i] < nums[i - 1]) {
@@ -34,10 +36,14 @@ public class Sort {
         }
     }
 
-    // 归并排序 从小到大
+    /**
+     * 归并排序 从小到大
+     */
     public void mergeSort(int[] nums, int start, int end) {
         int[] result = new int[nums.length];
-        if (start >= end) return;
+        if (start >= end) {
+            return;
+        }
         int len = end - start;
         int mid = (len >> 1) + start;
         int start1 = start;
@@ -45,16 +51,23 @@ public class Sort {
         mergeSort(nums, start1, mid);
         mergeSort(nums, start2, end);
         int k = start;
-        while (start1 <= mid && start2 <= end)
+        while (start1 <= mid && start2 <= end) {
             result[k++] = nums[start1] < nums[start2] ? nums[start1++] : nums[start2++];
-        while (start1 <= mid)
+        }
+        while (start1 <= mid) {
             result[k++] = nums[start1++];
-        while (start2 <= end)
+        }
+        while (start2 <= end) {
             result[k++] = nums[start2++];
-        if (end + 1 >= 0) System.arraycopy(result, 0, nums, 0, end + 1);
+        }
+        if (end + 1 >= 0) {
+            System.arraycopy(result, 0, nums, 0, end + 1);
+        }
     }
 
-    // 插入排序 从大到小
+    /**
+     * 插入排序 从大到小
+     */
     public void inSort(int[] nums, int start, int end) {
         for (int i = 1; i < nums.length; i++) {
             if (nums[i] < nums[i - 1]) {
@@ -73,18 +86,26 @@ public class Sort {
 
     // 堆排序 从大到小
 
-    // 快速排序 从大到小
+    /**
+     * 快速排序 从大到小
+     */
     public void quickSort(int[] nums, int l, int r) {
-        if (l >= r) return;
+        if (l >= r) {
+            return;
+        }
         int x = nums[l];
         int i = l;
         int j = r;
         while (i < j) {
-            while (i < j && (x < nums[j])) j--;
+            while (i < j && (x < nums[j])) {
+                j--;
+            }
             if (i < j) {
                 nums[i++] = nums[j];
             }
-            while (i < j && (x >= nums[i])) i++;
+            while (i < j && (x >= nums[i])) {
+                i++;
+            }
             if (i < j) {
                 nums[j--] = nums[i];
             }

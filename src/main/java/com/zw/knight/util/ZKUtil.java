@@ -1,6 +1,5 @@
 package com.zw.knight.util;
 
-import com.sun.deploy.net.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
