@@ -29,6 +29,6 @@ public class No42 {
      *
      */
     public void getRain(){
-        // 123
+
     }
 }
